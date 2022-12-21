@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "lodepng.h"
+#include <cuda_runtime_api.h>
 
 
 
@@ -39,13 +40,11 @@ int main () {
     unsigned char *deviceImageOutput;
 
 
-    // allocate memory in gpu
+    // allocate memory for gpu
     cudaMalloc( (void **) &deviceImageInput, totalSpace);
     cudaMalloc( (void **) &deviceImageOutput, totalSpace);
-
-
-
-
+    // allocate memory in gpu
+    cudaMemcpy(deviceImageInput, hostImageInput, totalSpace, cudaMemcpyHostToDevice);
 
 
 
