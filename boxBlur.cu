@@ -2,6 +2,14 @@
 #include <stdlib.h>
 #include "lodepng.h"
 
+
+
+//compile with c++ lodepng file
+//nvcc boxBlur.cu lodepng.cpp
+
+
+
+
 int main () {
     // png decode variables
     unsigned char *img;
@@ -26,7 +34,14 @@ int main () {
         hostImageInput[i]  = img[i];
     }
 
-    // 
+    // declare memory pointers for GPU (device)
+    unsigned char *deviceImageInput;
+    unsigned char *deviceImageOutput;
+
+
+    // allocate memory in gpu
+    cudaMalloc( (void **) &deviceImageInput, totalSpace);
+    cudaMalloc( (void **) &deviceImageOutput, totalSpace);
 
 
 
