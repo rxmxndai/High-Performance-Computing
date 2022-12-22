@@ -10,7 +10,7 @@
 
 __global__ void boxBlur(unsigned char *ImageInput, unsigned char * ImageOuput, int width, int height){
 
-	int x[]={NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
+	int filter[] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
 
 	int red=0;
 	int green=0;
@@ -19,93 +19,98 @@ __global__ void boxBlur(unsigned char *ImageInput, unsigned char * ImageOuput, i
 
 	int i = blockDim.x * blockIdx.x + threadIdx.x;
 	if(i==0){
-		x[0]=i;
-		x[1]=i+1;
-		x[2]=i+width;
-		x[3]=i+width+1;
+		filter[0] = i;
+		filter[1] = i+1;
+		filter[2] = i+width;
+		filter[3] = i+width+1;
 
 	}
 	else if(i>0 && i<(width-1)){
-		x[0]=i;
-		x[1]=i+1;
-		x[2]=i-1;
-		x[3]=i+width;
-		x[4]=1+i+width;
-		x[5]=i+width-1;
+		filter[0] = i;
+		filter[1] = i+1;
+		filter[2] = i-1;
+		filter[3] = i+width;
+		filter[4] = 1+i+width;
+		filter[5] = i+width-1;
 	}
 	else if (i==(width-1)){
-		x[0]=i;
-		x[1]=i-1;
-		x[2]=i+width;
-		x[3]=i+width-1;
+		filter[0] = i;
+		filter[1] = i-1;
+		filter[2] = i+width;
+		filter[3] = i+width-1;
 	}
 	else if(((i > width-1 && i< (height*width)-width) && ((i+1) % width ==0))){
-		x[0]=i;
-		x[1]=i-1;
-		x[2]=i-width;
-		x[3]=i-width-1;
-		x[4]=i+width;
-		x[5]=i+width-1;
+		filter[0] = i;
+		filter[1] = i-1;
+		filter[2] = i-width;
+		filter[3] = i-width-1;
+		filter[4] = i+width;
+		filter[5] = i+width-1;
 	}
 	else if (i==((height*width)-1)){
-		x[0]=i;
-		x[1]=i-1;
-		x[2]=i-width-1;
-		x[3]=i-width;
+		filter[0] = i;
+		filter[1] = i-1;
+		filter[2] = i-width-1;
+		filter[3] = i-width;
 	}
 	else if(i>((height*width)-width) && i < (height*width)){
-		x[0]=i;
-		x[1]=i+1;
-		x[2]=i-1;
-		x[3]=i-width;
-		x[4]=i-width-1;
-		x[5]=i-width+1;
+		filter[0] = i;
+		filter[1] = i+1;
+		filter[2] = i-1;
+		filter[3] = i-width;
+		filter[4] = i-width-1;
+		filter[5] = i-width+1;
 	}
 	else if(i==(height*width)-width){
-		x[0]=i;
-		x[1]=i+1;
-		x[2]=i-width;
-		x[3]=i-width+1;
+		filter[0] = i;
+		filter[1] = i+1;
+		filter[2] = i-width;
+		filter[3] = i-width+1;
 	}
 	else if((i>width-1 &&i<(height*width)-(2*width+1))&&i % width ==0){
-		x[0]=i;
-		x[1]=i+1;
-		x[2]=i+width;
-		x[3]=i+width+1;
-		x[4]=i-width;
-		x[5]=i-width+1;
+		filter[0] = i;
+		filter[1] = i+1;
+		filter[2] = i+width;
+		filter[3] = i+width+1;
+		filter[4] = i-width;
+		filter[5] = i-width+1;
 
 	}
 	else{
-		x[0]=i;
-		x[1]=i+1;
-		x[2]=i-1;
-		x[3]=i+width;
-		x[4]=i+width+1;
-		x[5]=i+width-1;
-		x[6]=i-width;
-		x[7]=i-width+1;
-		x[8]=i-width-1;
+		filter[0] = i;
+		filter[1] = i+1;
+		filter[2] = i-1;
+		filter[3] = i+width;
+		filter[4] = i+width+1;
+		filter[5] = i+width-1;
+		filter[6] = i-width;
+		filter[7] = i-width+1;
+		filter[8] = i-width-1;
 	}
+
+
+
 	int pixel = i*4;
 	int c=0;
-for (int i=0;i<sizeof(x)/sizeof(x[0]);i++){
-	if(x[i]!=NULL){
-		red+= ImageInput[x[i]*4];
-		green+= ImageInput[x[i]*4+1];
-		blue+= ImageInput[x[i]*4+2];
-		c++;
+	for (int i=0; i<sizeof(filter)/sizeof(filter[0]); i++){
+		if(filter[i] != NULL){
+			red += ImageInput[filter[i]*4];
+			green += ImageInput[filter[i]*4+1];
+			blue += ImageInput[filter[i]*4+2];
+			c++;
 		}
-
 	}
-		red=red/c;
-		green=green/c;
-		blue=blue/c;
-		transperency=ImageInput[i*4+3];
-		ImageOuput[pixel] = red;
-		ImageOuput[1+pixel] = green;
-		ImageOuput[2+pixel] = blue;
-		ImageOuput[3+pixel] = transperency;
+	
+	red = red/c;
+	green = green/c;
+	blue = blue/c;
+	transperency = ImageInput[i*4+3];
+
+
+	ImageOuput[pixel] = red;
+	ImageOuput[1+pixel] = green;
+	ImageOuput[2+pixel] = blue;
+	ImageOuput[3+pixel] = transperency;
 }
 
 

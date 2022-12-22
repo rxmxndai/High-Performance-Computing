@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "random": "cpp"
+        "random": "cpp",
+        "*.tcc": "cpp",
+        "functional": "cpp",
+        "limits": "cpp"
     }
 }
