@@ -18,6 +18,8 @@ __global__ void boxBlur(unsigned char *ImageInput, unsigned char * ImageOuput, i
 	int transperency=0;
 
 	int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+
 	if(i==0){
 		filter[0] = i;
 		filter[1] = i+1;
@@ -164,7 +166,7 @@ int main () {
     cudaMemcpy(hostImageOutput, deviceImageOutput, totalSpace, cudaMemcpyDeviceToHost);
 	
     // encode output image data to new image
-	lodepng_encode32_file("output.png", hostImageOutput, width, height);
+	lodepng_encode32_file("cudaBlur.png", hostImageOutput, width, height);
 
 
     // free dynamic allocation
