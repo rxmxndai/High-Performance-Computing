@@ -101,16 +101,7 @@ __global__ void boxBlur(unsigned char *ImageInput, unsigned char * ImageOuput, i
 		}
 	}
 	
-	red = red/c;
-	green = green/c;
-	blue = blue/c;
-	transperency = ImageInput[i*4+3];
-
-
-	ImageOuput[pixel] = red;
-	ImageOuput[1+pixel] = green;
-	ImageOuput[2+pixel] = blue;
-	ImageOuput[3+pixel] = transperency;
+	
 }
 
 
