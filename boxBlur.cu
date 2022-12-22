@@ -8,88 +8,92 @@
 //compile with c++ lodepng file
 //nvcc boxBlur.cu lodepng.cpp
 
-__global__ void boxBlur(unsigned char *Image, unsigned char * ImageOuput, int b, int a){
+__global__ void boxBlur(unsigned char *ImageInput, unsigned char * ImageOuput, int width, int height){
 
 	int x[]={NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
 
-	int red=0,green=0,blue=0,trans=0;
+	int red=0;
+	int green=0;
+	int blue=0;
+	int transperency=0;
+
 	int i = blockDim.x * blockIdx.x + threadIdx.x;
 	if(i==0){
 		x[0]=i;
 		x[1]=i+1;
-		x[2]=i+b;
-		x[3]=i+b+1;
+		x[2]=i+width;
+		x[3]=i+width+1;
 
 	}
-	else if(i>0 && i<(b-1)){
+	else if(i>0 && i<(width-1)){
 		x[0]=i;
 		x[1]=i+1;
 		x[2]=i-1;
-		x[3]=i+b;
-		x[4]=1+i+b;
-		x[5]=i+b-1;
+		x[3]=i+width;
+		x[4]=1+i+width;
+		x[5]=i+width-1;
 	}
-	else if (i==(b-1)){
+	else if (i==(width-1)){
 		x[0]=i;
 		x[1]=i-1;
-		x[2]=i+b;
-		x[3]=i+b-1;
+		x[2]=i+width;
+		x[3]=i+width-1;
 	}
-	else if(((i > b-1 && i< (a*b)-b) && ((i+1) % b ==0))){
+	else if(((i > width-1 && i< (height*width)-width) && ((i+1) % width ==0))){
 		x[0]=i;
 		x[1]=i-1;
-		x[2]=i-b;
-		x[3]=i-b-1;
-		x[4]=i+b;
-		x[5]=i+b-1;
+		x[2]=i-width;
+		x[3]=i-width-1;
+		x[4]=i+width;
+		x[5]=i+width-1;
 	}
-	else if (i==((a*b)-1)){
+	else if (i==((height*width)-1)){
 		x[0]=i;
 		x[1]=i-1;
-		x[2]=i-b-1;
-		x[3]=i-b;
+		x[2]=i-width-1;
+		x[3]=i-width;
 	}
-	else if(i>((a*b)-b) && i < (a*b)){
+	else if(i>((height*width)-width) && i < (height*width)){
 		x[0]=i;
 		x[1]=i+1;
 		x[2]=i-1;
-		x[3]=i-b;
-		x[4]=i-b-1;
-		x[5]=i-b+1;
+		x[3]=i-width;
+		x[4]=i-width-1;
+		x[5]=i-width+1;
 	}
-	else if(i==(a*b)-b){
+	else if(i==(height*width)-width){
 		x[0]=i;
 		x[1]=i+1;
-		x[2]=i-b;
-		x[3]=i-b+1;
+		x[2]=i-width;
+		x[3]=i-width+1;
 	}
-	else if((i>b-1 &&i<(a*b)-(2*b+1))&&i % b ==0){
+	else if((i>width-1 &&i<(height*width)-(2*width+1))&&i % width ==0){
 		x[0]=i;
 		x[1]=i+1;
-		x[2]=i+b;
-		x[3]=i+b+1;
-		x[4]=i-b;
-		x[5]=i-b+1;
+		x[2]=i+width;
+		x[3]=i+width+1;
+		x[4]=i-width;
+		x[5]=i-width+1;
 
 	}
 	else{
 		x[0]=i;
 		x[1]=i+1;
 		x[2]=i-1;
-		x[3]=i+b;
-		x[4]=i+b+1;
-		x[5]=i+b-1;
-		x[6]=i-b;
-		x[7]=i-b+1;
-		x[8]=i-b-1;
+		x[3]=i+width;
+		x[4]=i+width+1;
+		x[5]=i+width-1;
+		x[6]=i-width;
+		x[7]=i-width+1;
+		x[8]=i-width-1;
 	}
 	int pixel = i*4;
 	int c=0;
 for (int i=0;i<sizeof(x)/sizeof(x[0]);i++){
 	if(x[i]!=NULL){
-		red+= Image[x[i]*4];
-		green+= Image[x[i]*4+1];
-		blue+= Image[x[i]*4+2];
+		red+= ImageInput[x[i]*4];
+		green+= ImageInput[x[i]*4+1];
+		blue+= ImageInput[x[i]*4+2];
 		c++;
 		}
 
@@ -97,11 +101,11 @@ for (int i=0;i<sizeof(x)/sizeof(x[0]);i++){
 		red=red/c;
 		green=green/c;
 		blue=blue/c;
-		trans=Image[i*4+3];
+		transperency=ImageInput[i*4+3];
 		ImageOuput[pixel] = red;
 		ImageOuput[1+pixel] = green;
 		ImageOuput[2+pixel] = blue;
-		ImageOuput[3+pixel] = trans;
+		ImageOuput[3+pixel] = transperency;
 }
 
 
