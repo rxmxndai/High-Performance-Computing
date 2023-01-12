@@ -69,7 +69,10 @@ void checkArguments(int argc, char **argv) {
 
 
 
-// *******************************************************************************************************************************88 //
+// ******************************************************************************************************************************* //
+
+// function to make a new 2d array that receives a pointer and 
+// returns new 2d array with 0 as default value for all index
 double ** initializeNew2Darray(int *dimension) {
     double **arr;
 
@@ -88,7 +91,8 @@ double ** initializeNew2Darray(int *dimension) {
 
 
 
-// *******************************************************************************************************************************88 //
+// ******************************************************************************************************************************* //
+// Receives a matrix (struct) that contains rows, columns and the actual 2d arrray of image file
 void displayMatrix(const matrix m) {
     int r=m.row, c=m.column;
 
@@ -106,7 +110,9 @@ void displayMatrix(const matrix m) {
 
 
 
-// *******************************************************************************************************************************88 //
+// ******************************************************************************************************************************* //
+// receives a filename and reads through each character in the file,
+// returns number of rows and columns of that file data
 int * getDimension(const char *filename) {
     FILE *fptr;
     fptr = fopen(filename, "r");
@@ -140,7 +146,9 @@ int * getDimension(const char *filename) {
 
 
 
-// *******************************************************************************************************************************88 //
+// *******************************************************************************************************************************//
+// checks weather the number of thread exceeds the total number of elements in eiter matrices
+
 void canMultiply(int rowA, int rowB, int colA, int colB) {
     int dimensionA = rowA * colA;
     int dimensionB = rowB * colB;
@@ -159,8 +167,10 @@ void canMultiply(int rowA, int rowB, int colA, int colB) {
 
 
 
-// *******************************************************************************************************************************88 //
-void storeMatrix(double **arr, const char *filename, int *dimension) {
+// ******************************************************************************************************************************* //
+// receives the array that needs to be stored with files' values, the filename from where to store, 
+// and the dimension of the matrix where rows and columns are specified
+void storeMatrixFromFile(double **arr, const char *filename, int *dimension) {
     int row = *(dimension+0), column = *(dimension+1);
     FILE *fptr = fopen(filename, "r");
 
@@ -206,7 +216,7 @@ void writeMatrixToFile(matrix mat, int * d) {
 
 
 
-// *******************************************************************************************************************************88 //
+// ************************* Entry point of the CODE *********************************************************88 //
 
 void main (int argc, char **argv) {
 
@@ -217,7 +227,7 @@ void main (int argc, char **argv) {
 
     char *matrixA_fileName = "Mat1.txt";
     char *matrixB_fileName = "Mat2.txt";
-    char *resultantMatrix_filename = "class.txt";
+    char *resultantMatrix_filename = "MultipliedMatrix.txt";
     
     // FOPEN three files
     fptrA = fopen(matrixA_fileName, "r");
@@ -262,10 +272,10 @@ void main (int argc, char **argv) {
     // Make a new dynamic 2d array with double pointers
     double **arrA, **arrB, **arrC;
     arrA = initializeNew2Darray(dimensionA);
-    storeMatrix(arrA, matrixA_fileName, dimensionA);
+    storeMatrixFromFile(arrA, matrixA_fileName, dimensionA);
 
     arrB = initializeNew2Darray(dimensionB);
-    storeMatrix(arrB, matrixB_fileName, dimensionB);
+    storeMatrixFromFile(arrB, matrixB_fileName, dimensionB);
 
     printf("\n ******************** \n");
     dimensionC[0] = rowC;
@@ -364,13 +374,14 @@ void main (int argc, char **argv) {
     printf("\n ********** Matrix C elements ********** \n");
     displayMatrix(matC);
 
-    printf("\n ******************** \n");
     dimensionC[0] = rowC;
     dimensionC[1] = colC;
     
     // writing to txt file sending matrix
     writeMatrixToFile(matC, dimensionC);
+    printf("\n ******************** \n");
     printf("\nOutputMatrix written in file '%s'\n", resultantMatrix_filename);
+    printf("\n ******************** \n");
 
     pthread_mutex_destroy(&mutex);
     free(arrA);
@@ -415,10 +426,10 @@ void *multiplyMatrices(void *args)
     
     for (int i = startLimit; i <= endLimit; i++)
     {   
-        // calcualte from left to right
+        // calcualte from left to right of final matrix
         for (int j = 0; j < colC; j++)
         {
-            // calculate from top to bottom
+            // calculate from top to bottom of final matrix
             for (int k = 0; k < rowB; k++)
             {
                 sum += *(*(arrA+i)+k) * *(*(arrB+k)+j);
