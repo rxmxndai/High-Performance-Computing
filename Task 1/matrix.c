@@ -4,6 +4,20 @@
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+    COMPILE THIS CODE USING:   gcc matrix.c -o [executableFileName] -lpthread
+
+
+    EXECUTE THIS CODE USING:   [executableFileName] [NUM OF THREADS]
+
+
+    TO CHANGE THE MATRIX INPUT DATA CHANGE LINE NUMBER 242 AND 243 WITH NAME OF DESIRED MATRIX FILE
+*/
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 // to get the start and end value of the iterative loop for each thread
 struct threadInfo
 {
@@ -418,7 +432,7 @@ void *multiplyMatrices(void *args)
     int colC = rowA;
 
 
-    printf("StartLimit: %d,\t EnLimit: %d\n", startLimit, endLimit);
+    printf("\nStartLimit: %d,\t EndLimit: %d\n", startLimit, endLimit);
 
     ///////////////////////////////////////////////////////////////////////////////////
     pthread_mutex_lock(&mutex);
@@ -426,10 +440,10 @@ void *multiplyMatrices(void *args)
     
     for (int i = startLimit; i <= endLimit; i++)
     {   
-        // calcualte from left to right of final matrix
+        // Iterates through left to right of final matrix
         for (int j = 0; j < colC; j++)
         {
-            // calculate from top to bottom of final matrix
+            // Iterates through top to bottom of final matrix
             for (int k = 0; k < rowB; k++)
             {
                 sum += *(*(arrA+i)+k) * *(*(arrB+k)+j);
@@ -438,7 +452,6 @@ void *multiplyMatrices(void *args)
             *(*(arrC+i) +j) = sum;
             sum = 0.0;
         }
-        printf("\n");
     }
 
     pthread_mutex_unlock(&mutex);

@@ -22,7 +22,7 @@
   letters and a 2 digit integer.
 
   Compile with:
-    gcc CrackAZ99.c -pthread -lcrypt -o CrackAZ99 
+    gcc CrackAZ99.c -pthread -lcrypt -o CrackAZ99
 
   Execute with:
     ./CrackAZ99 <number_of_threads>
@@ -56,9 +56,9 @@ void substr(char *dest, char *src, int start, int length)
 
 /**
  This function can crack the kind of password explained above. All combinations
- that are tried are displayed and when the password is found, #, is put at the 
- start of the line. Note that one of the most time consuming operations that 
- it performs is the output of intermediate results, so performance experiments 
+ that are tried are displayed and when the password is found, #, is put at the
+ start of the line. Note that one of the most time consuming operations that
+ it performs is the output of intermediate results, so performance experiments
  for this kind of program should not include this. i.e. comment out the printfs.
 */
 
@@ -157,11 +157,11 @@ void prepareSliceList()
   int endList[threadCount];
 
   /*
-  * For threads = 3,
-  * first thread will loop through the outer loop processing the characters from A through I i.e., first 9 uppercase characters
-  * second thread will loop through the outer loop processing the characters from J through R i.e., other 9 uppercase characters
-  * third thread will loop through the outer loop processing the characters from S through Z i.e., the remaining 8 uppercase characters
-  *  */
+   * For threads = 3,
+   * first thread will loop through the outer loop processing the characters from A through I i.e., first 9 uppercase characters
+   * second thread will loop through the outer loop processing the characters from J through R i.e., other 9 uppercase characters
+   * third thread will loop through the outer loop processing the characters from S through Z i.e., the remaining 8 uppercase characters
+   *  */
   for (int k = 0; k < threadCount; k++)
   {
     if (k == 0)
